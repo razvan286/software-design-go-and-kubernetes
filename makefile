@@ -33,6 +33,20 @@ METRICS_IMAGE   := $(BASE_IMAGE_NAME)/metrics:$(VERSION)
 AUTH_IMAGE      := $(BASE_IMAGE_NAME)/$(AUTH_APP):$(VERSION)
 
 # ==============================================================================
+# Building containers
+
+build: sales
+
+sales:
+	docker build \
+		-f zarf/docker/dockerfile.sales \
+		-t $(SALES_IMAGE) \
+		--build-arg BUILD_REF=$(VERSION) \
+		--build-arg BUILD_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
+		.
+
+
+# ==============================================================================
 # Running from within k8s/kind
 # Docker Desktop 28.3.2 changed how it stores image layers, causing KIND's kind
 # load docker-image command to fail with "content digest not found" errors. The
