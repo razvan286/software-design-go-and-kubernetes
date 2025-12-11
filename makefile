@@ -45,6 +45,54 @@ sales:
 		--build-arg BUILD_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
 		.
 
+dev-up:
+	kind create cluster \
+		--image $(KIND) \
+		--name $(KIND_CLUSTER) \
+		--config zarf/k8s/dev/kind-config.yaml
+
+	kubectl wait --timeout=120s --namespace=local-path-storage --for=condition=Available deployment/local-path-provisioner
+
+dev-down:
+	kind delete cluster --name $(KIND_CLUSTER)
+
+dev-status-all:
+	kubectl get nodes -o wide
+	kubectl get svc -o wide
+	kubectl get pods -o wide --watch --all-namespaces
+
+dev-status:
+	watch -n 2 kubectl get pods -o wide --all-namespaces
+
+# ==============================================================================
+
+dev-load:
+	kind load docker-image $(SALES_IMAGE) --name $(KIND_CLUSTER)
+
+dev-apply:
+	kustomize build zarf/k8s/dev/sales | kubectl apply -f -
+	kubectl wait pods --namespace=$(NAMESPACE) --selector app=$(SALES_APP) --timeout=120s --for=condition=Ready
+
+dev-restart:
+	kubectl rollout restart deployment $(SALES_APP) --namespace=$(NAMESPACE)
+
+dev-run: build dev-up dev-load dev-apply
+
+dev-update: build dev-load dev-restart
+
+dev-update-apply: build dev-load dev-apply
+
+dev-logs:
+	kubectl logs --namespace=$(NAMESPACE) -l app=$(SALES_APP) --all-containers=true -f --tail=100 --max-log-requests=6 | go run apis/tooling/logfmt/main.go -service=$(SALES_APP)
+
+# ------------------------------------------------------------------------------
+
+dev-describe-deployment:
+	kubectl describe deployment --namespace=$(NAMESPACE) $(SALES_APP)
+
+dev-describe-sales:
+	kubectl describe pod --namespace=$(NAMESPACE) -l app=$(SALES_APP)
+
 
 # ==============================================================================
 # Running from within k8s/kind
@@ -61,13 +109,7 @@ sales:
 # docker save $(PROMTAIL) | docker exec -i $(KIND_CLUSTER)-control-plane ctr --namespace=k8s.io images import - & \
 # wait;
 
-dev-up:
-	kind create cluster \
-		--image $(KIND) \
-		--name $(KIND_CLUSTER) \
-		--config zarf/k8s/dev/kind-config.yaml
 
-	kubectl wait --timeout=120s --namespace=local-path-storage --for=condition=Available deployment/local-path-provisioner
 
 # kind load docker-image $(POSTGRES) --name $(KIND_CLUSTER)
 # kind load docker-image $(GRAFANA) --name $(KIND_CLUSTER)
@@ -75,15 +117,3 @@ dev-up:
 # kind load docker-image $(TEMPO) --name $(KIND_CLUSTER)
 # kind load docker-image $(LOKI) --name $(KIND_CLUSTER)
 # kind load docker-image $(PROMTAIL) --name $(KIND_CLUSTER)
-
-dev-down:
-	kind delete cluster --name $(KIND_CLUSTER)
-
-dev-status-all:
-	kubectl get nodes -o wide
-	kubectl get svc -o wide
-	kubectl get pods -o wide --watch --all-namespaces
-
-dev-status:
-	watch -n 2 kubectl get pods -o wide --all-namespaces
-
