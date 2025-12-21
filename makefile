@@ -11,6 +11,15 @@ help:
 version:
 	go run apis/services/sales/main.go -v
 
+curl-test:
+	curl -il -X GET http://localhost:3000/test
+
+curl-live:
+	curl -il -X GET http://localhost:3000/liveness
+
+curl-ready:
+	curl -il -X GET http://localhost:3000/readiness
+
 tidy:
 	go mod tidy
 	go mod vendor
