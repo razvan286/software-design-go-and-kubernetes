@@ -6,12 +6,14 @@ import (
 	"os"
 
 	"github.com/razvan286/software-design-go-and-kubernetes/apis/services/sales/route/sys/checkapi"
+	"github.com/razvan286/software-design-go-and-kubernetes/app/api/mid"
+	"github.com/razvan286/software-design-go-and-kubernetes/foundation/logger"
 	"github.com/razvan286/software-design-go-and-kubernetes/foundation/web"
 )
 
 // WebAPI constructs a http.Handler with all application routes bound.
-func WebAPI(shutdown chan os.Signal) *web.App {
-	mux := web.NewApp(shutdown)
+func WebAPI(log *logger.Logger, shutdown chan os.Signal) *web.App {
+	mux := web.NewApp(shutdown, mid.Logger(log))
 
 	checkapi.Routes(mux)
 
