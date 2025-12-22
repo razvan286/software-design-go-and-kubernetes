@@ -2,29 +2,27 @@ package mid
 
 import (
 	"context"
-	"net/http"
+	"fmt"
+	"time"
 
 	"github.com/razvan286/software-design-go-and-kubernetes/foundation/logger"
 	"github.com/razvan286/software-design-go-and-kubernetes/foundation/web"
 )
 
-func Logger(log *logger.Logger) web.MidHandler {
-	m := func(handler web.Handler) web.Handler {
+// Logger writes information about the request to the logs.
+func Logger(ctx context.Context, log *logger.Logger, path string, rawQuery string, method string, remoteAddr string, handler Handler) error {
+	v := web.GetValues(ctx)
 
-		h := func(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
-			log.Info(ctx, "request started", "method", r.Method, "path", r.URL.Path, "remoteaddr", r.RemoteAddr)
-			// Logging
-
-			err := handler(ctx, w, r)
-
-			// Logging
-			log.Info(ctx, "request completed", "method", r.Method, "path", r.URL.Path, "remoteaddr", r.RemoteAddr)
-			
-			return err
-		}
-
-		return h
+	if rawQuery != "" {
+		path = fmt.Sprintf("%s?%s", path, rawQuery)
 	}
-	return m
 
+	log.Info(ctx, "request started", "method", method, "path", path, "remoteAddr", remoteAddr)
+
+	err := handler(ctx)
+
+	log.Info(ctx, "request completed", "method", method, "path", path, "remoteAddr", remoteAddr,
+		"statusCode", v.StatusCode, "since", time.Since(v.Now).String())
+
+	return err
 }

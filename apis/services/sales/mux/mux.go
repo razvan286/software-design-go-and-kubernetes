@@ -6,9 +6,9 @@ import (
 	"os"
 
 	"github.com/razvan286/software-design-go-and-kubernetes/apis/services/sales/route/sys/checkapi"
-	"github.com/razvan286/software-design-go-and-kubernetes/app/api/mid"
 	"github.com/razvan286/software-design-go-and-kubernetes/foundation/logger"
 	"github.com/razvan286/software-design-go-and-kubernetes/foundation/web"
+	"github.com/razvan286/software-design-go-and-kubernetes/apis/services/api/mid"
 )
 
 // WebAPI constructs a http.Handler with all application routes bound.

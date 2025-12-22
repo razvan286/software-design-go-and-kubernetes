@@ -16,6 +16,7 @@ import (
 	"github.com/razvan286/software-design-go-and-kubernetes/apis/services/api/debug"
 	"github.com/razvan286/software-design-go-and-kubernetes/apis/services/sales/mux"
 	"github.com/razvan286/software-design-go-and-kubernetes/foundation/logger"
+	"github.com/razvan286/software-design-go-and-kubernetes/foundation/web"
 )
 
 var build = "develop"
@@ -30,7 +31,7 @@ func main() {
 	}
 
 	traceIDFn := func(ctx context.Context) string {
-		return "" // web.GetTraceID(ctx)
+		return web.GetTraceID(ctx)
 	}
 
 	log = logger.NewWithEvents(os.Stdout, logger.LevelInfo, "SALES", traceIDFn, events)
