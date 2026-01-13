@@ -34,10 +34,6 @@ curl-panic:
 admin:
 	go run apis/tooling/admin/main.go
 
-tidy:
-	go mod tidy
-	go mod vendor
-
 # ==============================================================================
 # Define dependencies
 
@@ -154,3 +150,30 @@ statsviz:
 # kind load docker-image $(TEMPO) --name $(KIND_CLUSTER)
 # kind load docker-image $(LOKI) --name $(KIND_CLUSTER)
 # kind load docker-image $(PROMTAIL) --name $(KIND_CLUSTER)
+
+# ==============================================================================
+# Modules support
+
+tidy:
+	go mod tidy
+	go mod vendor
+
+# ==============================================================================
+# Running tests within the local computer
+
+test-r:
+	CGO_ENABLED=1 go test -race -count=1 ./...
+
+test-only:
+	CGO_ENABLED=0 go test -count=1 ./...
+
+lint:
+	CGO_ENABLED=0 go vet ./...
+	staticcheck -checks=all ./...
+
+vuln-check:
+	govulncheck ./...
+
+test: test-only lint vuln-check
+
+test-race: test-r lint vuln-check
