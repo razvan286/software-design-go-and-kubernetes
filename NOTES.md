@@ -8,4 +8,6 @@ Go Scheduler converts I/O bound workloads into CPU bound workloads. We never wan
 
 Polymorphism means that a piece of code is changing its behavior depending upon the concrete data it is operating on.
 
-At 10.5 min 16:00
+## Building trust through system layers and data integrity
+
+Build the data flow trust through type systems and data shaping.
