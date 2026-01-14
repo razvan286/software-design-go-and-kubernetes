@@ -172,6 +172,12 @@ statsviz:
 	$(OPEN_CMD) http://localhost:3010/debug/statsviz
 
 # ==============================================================================
+# Administration
+
+pgcli:
+	pgcli postgresql://postgres:postgres@localhost
+
+# ==============================================================================
 # Running from within k8s/kind
 # Docker Desktop 28.3.2 changed how it stores image layers, causing KIND's kind
 # load docker-image command to fail with "content digest not found" errors. The
