@@ -5,7 +5,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/google/uuid"
+	"github.com/razvan286/software-design-go-and-kubernetes/app/api/authclient"
 	"github.com/razvan286/software-design-go-and-kubernetes/app/api/errs"
 	"github.com/razvan286/software-design-go-and-kubernetes/app/api/mid"
 	"github.com/razvan286/software-design-go-and-kubernetes/business/api/auth"
@@ -49,27 +49,20 @@ func (api *api) authenticate(ctx context.Context, w http.ResponseWriter, r *http
 	// gets to this handler, authentication passed.
 
 	userID, err := mid.GetUserID(ctx)
-
 	if err != nil {
 		return errs.New(errs.Unauthenticated, err)
 	}
 
-	resp := struct {
-		UserID uuid.UUID
-		Claims auth.Claims
-	}{
+	resp := authclient.AuthenticateResp{
 		UserID: userID,
 		Claims: mid.GetClaims(ctx),
 	}
+
 	return web.Respond(ctx, w, resp, http.StatusOK)
 }
 
 func (api *api) authorize(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
-	var auth struct {
-		Claims auth.Claims
-		UserID uuid.UUID
-		Rule   string
-	}
+	var auth authclient.Authorize
 	if err := web.Decode(r, &auth); err != nil {
 		return errs.New(errs.FailedPrecondition, err)
 	}

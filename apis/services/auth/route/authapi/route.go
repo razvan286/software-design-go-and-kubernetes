@@ -8,7 +8,8 @@ import (
 
 // Routes adds specific routes for this group.
 func Routes(app *web.App, a *auth.Auth) {
-	authen := mid.Authorization(a)
+	// Needs to communicate with rego
+	authen := mid.AuthenticateLocal(a)
 
 	api := newAPI(a)
 	app.HandleFunc("GET /auth/token/{kid}", api.token, authen)
