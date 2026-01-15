@@ -8,7 +8,7 @@ import (
 	"github.com/razvan286/software-design-go-and-kubernetes/business/api/sqldb/dbarray"
 )
 
-type dbUser struct {
+type user struct {
 	ID           uuid.UUID      `db:"user_id"`
 	Name         string         `db:"name"`
 	Email        string         `db:"email"`
