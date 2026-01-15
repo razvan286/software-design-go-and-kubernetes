@@ -8,13 +8,13 @@ import (
 	"fmt"
 	"net/mail"
 
+	"github.com/google/uuid"
+	"github.com/jmoiron/sqlx"
 	"github.com/razvan286/software-design-go-and-kubernetes/business/api/order"
 	"github.com/razvan286/software-design-go-and-kubernetes/business/api/sqldb"
 	"github.com/razvan286/software-design-go-and-kubernetes/business/api/sqldb/dbarray"
 	"github.com/razvan286/software-design-go-and-kubernetes/business/domain/userbus"
 	"github.com/razvan286/software-design-go-and-kubernetes/foundation/logger"
-	"github.com/google/uuid"
-	"github.com/jmoiron/sqlx"
 )
 
 // Store manages the set of APIs for user database access.
@@ -125,7 +125,7 @@ func (s *Store) Query(ctx context.Context, filter userbus.QueryFilter, orderBy o
 		return nil, fmt.Errorf("namedqueryslice: %w", err)
 	}
 
-	return toBusUserSlice(dbUsrs)
+	return toBusUsers(dbUsrs)
 }
 
 // Count returns the total number of users in the DB.
@@ -207,7 +207,7 @@ func (s *Store) QueryByIDs(ctx context.Context, userIDs []uuid.UUID) ([]userbus.
 		return nil, fmt.Errorf("db: %w", err)
 	}
 
-	return toBusUserSlice(dbUsrs)
+	return toBusUsers(dbUsrs)
 }
 
 // QueryByEmail gets the specified user from the database by email.
