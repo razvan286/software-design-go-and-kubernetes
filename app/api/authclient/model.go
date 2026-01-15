@@ -1,7 +1,7 @@
 package authclient
 
 import (
-	"github.com/razvan286/software-design-go-and-kubernetes/business/api/auth"
+	"github.com/razvan286/software-design-go-and-kubernetes/app/api/auth"
 	"github.com/google/uuid"
 )
 

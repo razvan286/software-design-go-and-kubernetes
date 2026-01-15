@@ -11,5 +11,3 @@ Polymorphism means that a piece of code is changing its behavior depending upon 
 ## Building trust through system layers and data integrity
 
 Build the data flow trust through type systems and data shaping.
-
-At 12.3 at min 6:00
